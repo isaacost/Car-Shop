@@ -5,5 +5,7 @@ const control = new CarController();
 const carRouter: IRouter = Router();
 
 carRouter.post('/cars', control.create.bind(control));
+carRouter.get('/cars', control.get.bind(control));
+carRouter.get('/cars/:id', control.get.bind(control));
 
 export default carRouter;
