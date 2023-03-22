@@ -33,4 +33,14 @@ export default class CarService {
     const carsDomains = cars.map((e) => CarService.createDomain(e));
     return response(200, carsDomains);
   }
+
+  async update(id: string, car: Partial<ICar>) {
+    if (!isValidObjectId(id)) return responseError(422, 'Invalid mongo id');
+
+    const carUpdate = await this.model.update(id, car);
+    if (!carUpdate) return responseError(404, 'Car not found');
+
+    const message = CarService.createDomain(carUpdate);
+    return response(200, message);
+  }
 }
