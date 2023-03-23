@@ -41,6 +41,29 @@ describe('Testa a camada Service', function () {
     seatsQty: 5,
   };
 
+  const arrayOutputUpdate = [
+    new Car({
+      id: '641b5cade028df261c85d370',
+      model: 'Marea',
+      year: 2002,
+      color: 'Red',
+      status: true,
+      buyValue: 12.99,
+      doorsQty: 2,
+      seatsQty: 5,
+    }),
+  ];
+
+  const carUpdate: ICar = {
+    model: 'Marea',
+    year: 2002,
+    color: 'Red',
+    status: true,
+    buyValue: 12.99,
+    doorsQty: 2,
+    seatsQty: 5,
+  };
+
   it('Testas se adiona carro', async function () {
     sinon.stub(Model, 'create').resolves(carsOutput);
 
@@ -86,5 +109,22 @@ describe('Testa a camada Service', function () {
     expect(result.message).to.deep.equal({ message: 'Car not found' });
   }); 
 
+  it('Testa se é possível alterar pelo id', async function () {
+    sinon.stub(Model, 'findByIdAndUpdate').resolves(arrayOutputUpdate[0]);
+    
+    const service = new CarService();
+    const result = await service.update('641b5cade028df261c85d370', carUpdate);
+
+    expect(result.message).to.deep.equal(arrayOutputUpdate[0]);
+  }); 
+
+  it('Testa se não é possível alterar com id inválido', async function () {
+    sinon.stub(Model, 'findByIdAndUpdate').resolves(arrayOutputUpdate[0]);
+    
+    const service = new CarService();
+    const result = await service.update('1s4', carUpdate);
+
+    expect(result.message).to.deep.equal({ message: 'Invalid mongo id' });
+  }); 
   afterEach(sinon.restore);
 });
