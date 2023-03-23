@@ -32,4 +32,14 @@ export default class MotorcycleController {
       next(error);
     }
   }
+
+  async delete(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const { status, message } = await this.service.delete(id);      
+      res.status(status).json(message);
+    } catch (error) {
+      next(error);
+    }
+  }
 }

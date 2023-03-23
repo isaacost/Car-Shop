@@ -6,7 +6,10 @@ import Motorcycle from '../../../src/Domains/Motorcycle';
 import IMotorcycle from '../../../src/Interfaces/IMotorcycle';
 import MotorcycleService from '../../../src/Services/MotorcycleService';
 
-describe('Testa a camada Service', function () {
+const NOT_FOUND = 'Motorcycle not found';
+const INVALID_ID = 'Invalid mongo id';
+
+describe('Testa a camada Service das motorcycles', function () {
   const moto = 'Honda Cb 600f Hornet';
 
   const motorcycleOutput = new Motorcycle({
@@ -75,6 +78,15 @@ describe('Testa a camada Service', function () {
     expect(result.message).to.deep.equal(motorcycleOutput);
   });
 
+  it('Testa se o dominio for nulo', async function () {
+    sinon.stub(Model, 'create').resolves();
+
+    const service = new MotorcycleService();
+    const result = await service.create(motorcycle);
+
+    expect(result.message).to.deep.equal(null);
+  });
+
   it('Testa se lista todos as motos', async function () {
     sinon.stub(Model, 'find').resolves(arrayOutput);
     
@@ -99,7 +111,7 @@ describe('Testa a camada Service', function () {
     const service = new MotorcycleService();
     const result = await service.get('1s4');
 
-    expect(result.message).to.deep.equal({ message: 'Invalid mongo id' });
+    expect(result.message).to.deep.equal({ message: INVALID_ID });
   }); 
 
   it('Testa car invalido', async function () {
@@ -108,7 +120,7 @@ describe('Testa a camada Service', function () {
     const service = new MotorcycleService();
     const result = await service.get('641ba7ed17060851bebafad2');
 
-    expect(result.message).to.deep.equal({ message: 'Motorcycle not found' });
+    expect(result.message).to.deep.equal({ message: NOT_FOUND });
   }); 
   
   it('Testa se é possível alterar pelo id', async function () {
@@ -126,7 +138,45 @@ describe('Testa a camada Service', function () {
     const service = new MotorcycleService();
     const result = await service.update('1s4', motorcycleUpdate);
 
-    expect(result.message).to.deep.equal({ message: 'Invalid mongo id' });
+    expect(result.message).to.deep.equal({ message: INVALID_ID });
   }); 
+
+  it('Testa se não é possível alterar sem moto', async function () {
+    sinon.stub(Model, 'findByIdAndUpdate').resolves();
+    
+    const service = new MotorcycleService();
+    const result = await service.update('641ba7ed17060851bebafad2', motorcycleUpdate);
+
+    expect(result.message).to.deep.equal({ message: NOT_FOUND });
+  }); 
+
+  it('Testa se é possível remover pelo id', async function () {
+    sinon.stub(Model, 'findById').resolves(true);
+    sinon.stub(Model, 'findByIdAndDelete').resolves(true);
+
+    const service = new MotorcycleService();
+    const result = await service.delete('641ba7ed17060851bebafad2');
+
+    expect(result.message).to.deep.equal('deletado');
+  });
+
+  it('Testa se não é possível remover com id invalido', async function () {
+    sinon.stub(Model, 'findByIdAndDelete').resolves(arrayOutput[0]);
+
+    const service = new MotorcycleService();
+    const result = await service.delete('1s4');
+
+    expect(result.message).to.deep.equal({ message: INVALID_ID });
+  });
+
+  it('Testa se não é possível remover sem carro', async function () {
+    sinon.stub(Model, 'findByIdAndDelete').resolves();
+
+    const service = new MotorcycleService();
+    const result = await service.delete('641ba7ed17060851bebafad2');
+
+    expect(result.message).to.deep.equal({ message: NOT_FOUND });
+  });
+
   afterEach(sinon.restore);
 });

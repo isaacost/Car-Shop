@@ -35,11 +35,9 @@ export default abstract class AbstractODM<T> {
   }
 
   async remove(id: string) {
-    try {
-      await this.model.findByIdAndDelete(id);
-      return true;
-    } catch (error) {
-      return null;
-    }
+    const carExist = await this.getById(id);
+    if (!carExist) return null;
+    await this.model.findByIdAndDelete(id);
+    return true;
   }
 }
