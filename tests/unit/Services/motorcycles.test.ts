@@ -43,6 +43,29 @@ describe('Testa a camada Service', function () {
     }),
   ];
 
+  const motorcycleUpdate: IMotorcycle = {
+    model: moto,
+    year: 2005,
+    color: 'Black',
+    status: true,
+    buyValue: 30,
+    category: 'Street',
+    engineCapacity: 60,
+  };
+
+  const arrayOutputUpdate = [
+    new Motorcycle({
+      id: '641ba7ed17060851bebafad2',
+      model: moto,
+      year: 2005,
+      color: 'Black',
+      status: true,
+      buyValue: 30,
+      category: 'Street',
+      engineCapacity: 60,
+    }),
+  ];
+
   it('Testas se adiona moto', async function () {
     sinon.stub(Model, 'create').resolves(motorcycleOutput);
 
@@ -86,6 +109,24 @@ describe('Testa a camada Service', function () {
     const result = await service.get('641ba7ed17060851bebafad2');
 
     expect(result.message).to.deep.equal({ message: 'Motorcycle not found' });
+  }); 
+  
+  it('Testa se é possível alterar pelo id', async function () {
+    sinon.stub(Model, 'findByIdAndUpdate').resolves(arrayOutputUpdate[0]);
+    
+    const service = new MotorcycleService();
+    const result = await service.update('641ba7ed17060851bebafad2', motorcycleUpdate);
+
+    expect(result.message).to.deep.equal(arrayOutputUpdate[0]);
+  }); 
+
+  it('Testa se não é possível alterar com id inválido', async function () {
+    sinon.stub(Model, 'findByIdAndUpdate').resolves(arrayOutputUpdate[0]);
+    
+    const service = new MotorcycleService();
+    const result = await service.update('1s4', motorcycleUpdate);
+
+    expect(result.message).to.deep.equal({ message: 'Invalid mongo id' });
   }); 
   afterEach(sinon.restore);
 });
