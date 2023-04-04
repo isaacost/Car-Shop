@@ -1,5 +1,5 @@
 <h4 align="center">
-  <img width="180px" alt="trybe wallet logo" src="https://user-images.githubusercontent.com/100851855/229937044-202a27fb-6aa1-49e4-a3d8-f24421b097b1.png" />
+  <img width="180px" alt="trybe wallet logo" src="https://user-images.githubusercontent.com/100851855/229937234-268ccf35-a6f6-430e-87d1-a13566a9af7b.png" />
   <br /><br />
 </h4>
 
